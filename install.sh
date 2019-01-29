@@ -2,14 +2,14 @@
 
 # Sample installation script. Adjustments might be neccessary.
 
-HOSTNAME=`hostname`
-if [[ "$HOSTNAME" == max-*.desy.de ]]
-then
-    THIRD_PARTY_ROOT=/data/netapp/s2e/simex
-    git apply patch_for_maxwell
-else
-    THIRD_PARTY_ROOT=
-fi
+#HOSTNAME=`hostname`
+#if [[ "$HOSTNAME" == max-*.desy.de ]]
+#then
+    #THIRD_PARTY_ROOT=/data/netapp/s2e/simex
+    #git apply patch_for_maxwell
+#else
+    #THIRD_PARTY_ROOT=
+#fi
 
 echo $THIRD_PARTY_ROOT
 
@@ -49,6 +49,8 @@ echo "Changed dir to $PWD."
 # where <arch> is either intel64 or ia32
 export FC=ifort
 
+THIRD_PARTY_ROOT=/data/netapp/s2e/simex
+INSTALL_PREFIX=$HOME/py3.7
 # Some needed environment variables.
 export BOOST_ROOT=${THIRD_PARTY_ROOT}
 export Boost_NO_SYSTEM_PATHS=ON

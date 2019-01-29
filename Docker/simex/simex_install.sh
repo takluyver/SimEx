@@ -33,8 +33,8 @@ cd build
 #cmake -DCMAKE_INSTALL_PREFIX=$ROOT_DIR $ROOT_DIR
 # Uncomment the next line and specify the install dir for a developer install.
 cmake -DXCSITPhotonDetector=OFF \
-      -DGAPDPhotonDiffractor=OFF \
-      -DCrystFELPhotonDiffractor=OFF \
+      -DGAPDPhotonDiffractor=ON \
+      -DCrystFELPhotonDiffractor=ON \
       -DINSTALL_TESTS=OFF \
       -DSRW_OPTIMIZED=ON \
       -DDEVELOPER_INSTALL=OFF \
