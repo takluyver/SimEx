@@ -1,41 +1,66 @@
 #! /bin/bash
+HOSTNAME=`hostname`
 
-# Sample installation script. Adjustments might be neccessary.
+if [ -z $1 ]; then
+	cat <<EOF
+usage: $0 MODE
+	MODE includes:
+	conda-env: create conda simex virtual environment
+	conda: install SimEx in current conda environment 
+	maxwell
+	develop
+EOF
+	exit
+fi
 
-#HOSTNAME=`hostname`
-#if [[ "$HOSTNAME" == max-*.desy.de ]]
-#then
-    #THIRD_PARTY_ROOT=/data/netapp/s2e/simex
-    #git apply patch_for_maxwell
-#else
-    #THIRD_PARTY_ROOT=
-#fi
-
-echo $THIRD_PARTY_ROOT
 
 MODE=$1
 if [ $MODE = "maxwell" ]
 then
-    echo $MODE
-    INSTALL_PREFIX=$THIRD_PARTY_ROOT
-    DEVELOPER_MODE=OFF
-    XCSIT=OFF
+	echo $MODE
+	INSTALL_PREFIX=/data/netapp/s2e/simex
+	DEVELOPER_MODE=OFF
+	XCSIT=OFF
+	git apply patch_for_maxwell
 elif [ $MODE = "develop" ]
 then
-    echo $MODE
-    INSTALL_PREFIX=..
-    DEVELOPER_MODE=ON
-    XCSIT=ON
+	echo $MODE
+	INSTALL_PREFIX=..
+	DEVELOPER_MODE=ON
+	XCSIT=ON
+    THIRD_PARTY_ROOT=/data/netapp/s2e/simex
+elif [ $MODE = "conda-env" ]
+then
+	echo $MODE
+    echo "Create conda environment"
+	CONDA_BIN=`which conda`
+	CONDA_BIN=${CONDA_BIN%/*}
+	source ${CONDA_BIN%/*}/etc/profile.d/conda.sh
+	conda env create -n simex -f conda-requirements.yml
+	conda activate simex
+elif [ $MODE = "conda" ]
+then
+	echo $MODE
+	CONDA_BIN=`which conda`
+	CONDA_BIN=${CONDA_BIN%/*}
+	source ${CONDA_BIN%/*}/etc/profile.d/conda.sh
+	INSTALL_PREFIX=$CONDA_PREFIX
+	PYVERSION=`python -V | tr  '[:upper:]' '[:lower:]' | tr -d ' '`
+	PYLIB=${PYVERSION%.*}
+	DEVELOPER_MODE=ON
+	XCSIT=OFF
+	export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+	#export PYTHONPATH=$CONDA_PREFIX/lib/$PYLIB:$CONDA_PREFIX/lib/$PYLIB/site-packages:$PYTHONPATH
+	#echo "PYTHONPATH="$PYTHONPATH
 fi
 
 
-# Build for python3.4
 
 # Check for existing build directory, remove if found
 if [ -d build ]
 then
-    echo "Found build/ directory, will remove it now."
-    rm -rvf build
+	echo "Found build/ directory, will remove it now."
+	rm -rvf build
 fi
 
 # Create new build dir and cd into it.
@@ -77,7 +102,6 @@ cmake -DSRW_OPTIMIZED=ON \
       -DXCSIT_ROOT=$XCSIT_ROOT \
       -DBOOST_ROOT=$BOOST_ROOT \
       ..
-
 # Build the project.
 make -j32
 
@@ -88,3 +112,6 @@ cd ..
 
 # Revert
 git checkout -- CMakeLists.txt
+if [ $MODE = "develop" ]; then
+	echo "Please run 'source build/simex_vars.sh' before developing"
+fi
