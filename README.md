@@ -23,7 +23,7 @@ field and detection of the latter. The platform provides slots and
 interfaces for the various simulation steps.
 
 For more details (User Manual, installation instructions, examples, etc.),
-please visit the project's homepage at [https://eucall-software.github.io/simex_platform/](https://eucall-software.github.io/simex_platform/)
+please visit the project's homepage at https://panosc-vinyl.github.io/SimEx/
 
 ## Acknowledgements
 This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 654220.
